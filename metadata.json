@@ -1,0 +1,8 @@
+{
+  "name": "MOONLIT CLOSET",
+  "description": "Discover timeless Pakistani bridal and formal wear crafted with intricate embroidery, premium fabrics, and graceful modern silhouettes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
