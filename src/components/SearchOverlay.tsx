@@ -32,13 +32,13 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
   if (!isOpen) return null;
 
   const quickTags = [
+    'Bridal Collection',
+    'Party Wear',
     'Bridal Peshwas',
     'Zardozi',
-    'Organza Kurta',
     'Nikkah',
     'Raw Silk',
     'Velvet',
-    'Choker Set',
   ];
 
   const results = query.trim()

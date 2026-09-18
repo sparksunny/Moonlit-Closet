@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Heart, ShoppingBag, Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Search, Heart, ShoppingBag, Menu, X, Globe, ChevronDown, ShieldCheck } from 'lucide-react';
 import { Currency } from '../utils/formatters';
 
 interface HeaderProps {
@@ -11,6 +11,10 @@ interface HeaderProps {
   currency: Currency;
   onSelectCurrency: (c: Currency) => void;
   onNavigateSection: (sectionId: string, filterCategory?: string) => void;
+  onOpenAdmin: () => void;
+  isAdminLoggedIn?: boolean;
+  brandName?: string;
+  brandTagline?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,6 +26,10 @@ export const Header: React.FC<HeaderProps> = ({
   currency,
   onSelectCurrency,
   onNavigateSection,
+  onOpenAdmin,
+  isAdminLoggedIn,
+  brandName = 'MOONLIT CLOSET',
+  brandTagline = 'Couture • Lahore',
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,12 +44,11 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const navLinks = [
-    { label: 'Collections', sectionId: 'collections-section' },
-    { label: 'Bridal', sectionId: 'catalog-section', category: 'bridal' },
-    { label: 'Formal', sectionId: 'catalog-section', category: 'formal' },
-    { label: 'New Arrivals', sectionId: 'new-arrivals-section' },
+    { label: 'Bridal Collection', sectionId: 'bridal-collection-section', category: 'bridal' },
+    { label: 'Party Wear', sectionId: 'party-wear-section', category: 'party-wear' },
     { label: 'Craftsmanship', sectionId: 'craftsmanship-section' },
     { label: 'Occasions', sectionId: 'occasions-section' },
+    { label: 'Contact', sectionId: 'page-footer' },
   ];
 
   const currencies: Currency[] = ['PKR', 'USD', 'GBP', 'AED', 'CAD'];
@@ -71,8 +78,8 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Desktop Navigation Links (Left) */}
-            <nav className="hidden lg:flex items-center space-x-7">
-              {navLinks.slice(0, 4).map((link) => (
+            <nav className="hidden lg:flex items-center space-x-5 xl:space-x-6">
+              {navLinks.map((link) => (
                 <button
                   key={link.label}
                   id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
@@ -87,15 +94,30 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Center Brand Wordmark */}
             <div className="text-center cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <span className="block font-serif text-xl sm:text-2xl lg:text-3xl tracking-[0.24em] uppercase text-[#3B2A20] font-normal select-none">
-                MOONLIT CLOSET
+                {brandName}
               </span>
               <span className="hidden sm:block text-[9px] tracking-[0.35em] uppercase text-[#654B39]/80 font-light mt-0.5">
-                Couture • Lahore
+                {brandTagline}
               </span>
             </div>
 
-            {/* Right Icons: Currency, Search, Wishlist, Bag */}
-            <div className="flex items-center space-x-3 sm:space-x-5">
+            {/* Right Icons: Admin, Currency, Search, Wishlist, Bag */}
+            <div className="flex items-center space-x-2.5 sm:space-x-4">
+              {/* Admin Panel Button */}
+              <button
+                id="header-admin-btn"
+                onClick={onOpenAdmin}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] uppercase tracking-[0.16em] font-medium rounded-[1px] transition-all cursor-pointer ${
+                  isAdminLoggedIn
+                    ? 'bg-[#3B2A20] text-[#FFFDF9] hover:bg-[#523B2D]'
+                    : 'bg-[#F3E8DA] text-[#3B2A20] hover:text-[#B99A62] border border-[#D8C2A5]'
+                }`}
+                title="Admin Control Panel"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-[#B99A62]" />
+                <span className="hidden md:inline">Admin</span>
+              </button>
+
               {/* Currency Selector (Desktop) */}
               <div className="relative hidden md:block">
                 <button
@@ -190,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Drawer Top */}
               <div className="flex items-center justify-between pb-6 border-b border-[#D8C2A5]/40">
                 <span className="font-serif text-xl tracking-[0.2em] uppercase text-[#3B2A20]">
-                  MOONLIT CLOSET
+                  {brandName}
                 </span>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
@@ -216,6 +238,21 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                 ))}
               </nav>
+
+              {/* Mobile Admin Button */}
+              <div className="mt-8 pt-4 border-t border-[#D8C2A5]/40">
+                <button
+                  id="mobile-drawer-admin-btn"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAdmin();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#3B2A20] text-[#FFFDF9] text-xs uppercase tracking-[0.2em] font-medium rounded-[1px] hover:bg-[#523B2D] transition-colors cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4 text-[#B99A62]" />
+                  <span>Admin Control Panel</span>
+                </button>
+              </div>
 
               {/* Occasions Quick Links in Mobile */}
               <div className="mt-8 pt-6 border-t border-[#D8C2A5]/40">

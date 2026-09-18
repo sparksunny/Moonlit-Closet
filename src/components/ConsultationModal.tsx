@@ -22,6 +22,18 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({ isOpen, on
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+
+    const msg = `*New Bridal Consultation Request*\n` +
+      `• Name: ${formData.name}\n` +
+      `• Phone/WhatsApp: ${formData.phone}\n` +
+      (formData.weddingDate ? `• Wedding/Event Date: ${formData.weddingDate}\n` : '') +
+      `• Type: ${formData.location}`;
+
+    try {
+      window.open(`https://wa.me/17163131615?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.warn(err);
+    }
   };
 
   return (
@@ -64,9 +76,9 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({ isOpen, on
               <input
                 type="text"
                 required
-                value={formData.name}
+                value={formData.name || ''}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Amina Tariq"
+                placeholder="Client Name"
                 className="w-full bg-[#F8F1E7] border border-[#D8C2A5] p-2 text-xs text-[#3B2A20] focus:outline-none"
               />
             </div>
@@ -79,9 +91,9 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({ isOpen, on
                 <input
                   type="tel"
                   required
-                  value={formData.phone}
+                  value={formData.phone || ''}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+92 300 0000000"
+                  placeholder="+1 716 313 1615"
                   className="w-full bg-[#F8F1E7] border border-[#D8C2A5] p-2 text-xs text-[#3B2A20] focus:outline-none"
                 />
               </div>
@@ -92,7 +104,7 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({ isOpen, on
                 </label>
                 <input
                   type="date"
-                  value={formData.weddingDate}
+                  value={formData.weddingDate || ''}
                   onChange={(e) => setFormData({ ...formData, weddingDate: e.target.value })}
                   className="w-full bg-[#F8F1E7] border border-[#D8C2A5] p-2 text-xs text-[#3B2A20] focus:outline-none"
                 />

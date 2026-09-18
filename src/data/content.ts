@@ -19,27 +19,19 @@ import imgAnaya from '../assets/images/anaya_bridal_dress_1789229054013.jpg';
 export const FEATURED_COLLECTIONS: CollectionItem[] = [
   {
     id: 'col-bridal',
-    title: 'BRIDAL',
-    subtitle: 'Heirloom silhouettes with regal tilla & pearl embroidery',
+    title: 'BRIDAL COLLECTION',
+    subtitle: 'Heirloom silhouettes with regal tilla, vasli & pearl embroidery',
     tag: 'Haute Couture',
     image: imgBridalCol,
     categoryKey: 'bridal',
   },
   {
-    id: 'col-formal',
-    title: 'FORMAL',
-    subtitle: 'Understated elegance in sheer organza and raw silk',
-    tag: 'Luxury Pret',
+    id: 'col-party-wear',
+    title: 'PARTY WEAR',
+    subtitle: 'Understated elegance in sheer organza, plush velvet, and embellished raw silk',
+    tag: 'Luxury Pret & Festive',
     image: imgFormalCol,
-    categoryKey: 'formal',
-  },
-  {
-    id: 'col-guest',
-    title: 'WEDDING GUEST',
-    subtitle: 'Luminous tones designed for joyous family celebrations',
-    tag: 'Festive Edit',
-    image: imgGuestCol,
-    categoryKey: 'wedding-guest',
+    categoryKey: 'party-wear',
   },
 ];
 

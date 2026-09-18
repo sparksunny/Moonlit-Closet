@@ -1,13 +1,17 @@
 import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import heroImage from '../assets/images/hero_bridal_couture_1789228816381.jpg';
+import heroImageDefault from '../assets/images/hero_bridal_couture_1789228816381.jpg';
+import { SiteContent } from '../types';
 
 interface HeroProps {
   onExploreBridal: () => void;
   onViewCollection: () => void;
+  content?: SiteContent['hero'];
 }
 
-export const Hero: React.FC<HeroProps> = ({ onExploreBridal, onViewCollection }) => {
+export const Hero: React.FC<HeroProps> = ({ onExploreBridal, onViewCollection, content }) => {
+  const currentHeroImage = content?.image || heroImageDefault;
+
   return (
     <section 
       id="hero-section" 
@@ -37,21 +41,23 @@ export const Hero: React.FC<HeroProps> = ({ onExploreBridal, onViewCollection })
             <div className="inline-flex items-center gap-2 mb-4">
               <span className="w-6 h-[1px] bg-[#B99A62]"></span>
               <span className="text-[11px] uppercase tracking-[0.3em] font-medium text-[#B99A62]">
-                THE BRIDAL EDIT
+                {content?.eyebrow || 'THE BRIDAL EDIT'}
               </span>
               <span className="w-6 h-[1px] bg-[#B99A62]"></span>
             </div>
 
             {/* Main Heading */}
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-normal leading-[1.12] text-[#3B2A20] tracking-tight mb-5">
-              Made for Your <br />
-              <span className="italic font-normal text-[#523B2D]">Most Beautiful</span> <br />
-              Beginning
+              {content?.titleLine1 || 'Made for Your'} <br />
+              <span className="italic font-normal text-[#523B2D]">
+                {content?.titleHighlight || 'Most Beautiful'}
+              </span> <br />
+              {content?.titleLine2 || 'Beginning'}
             </h1>
 
             {/* Supporting Text */}
             <p className="text-[#654B39] text-base sm:text-lg leading-relaxed font-light mb-8 max-w-md">
-              Discover timeless silhouettes, delicate craftsmanship, and graceful details designed for unforgettable celebrations.
+              {content?.description || 'Discover timeless silhouettes, delicate craftsmanship, and graceful details designed for unforgettable celebrations.'}
             </p>
 
             {/* CTAs */}
@@ -61,7 +67,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreBridal, onViewCollection })
                 onClick={onExploreBridal}
                 className="group relative inline-flex items-center justify-center px-8 py-3.5 bg-[#3B2A20] text-[#F8F1E7] text-xs uppercase tracking-[0.25em] font-medium rounded-[2px] transition-all duration-300 hover:bg-[#4D372A] hover:-translate-y-0.5 shadow-sm hover:shadow-md cursor-pointer"
               >
-                <span>EXPLORE BRIDAL</span>
+                <span>{content?.primaryButtonText || 'EXPLORE BRIDAL'}</span>
                 <ArrowRight className="w-3.5 h-3.5 ml-2.5 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
 
@@ -70,7 +76,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreBridal, onViewCollection })
                 onClick={onViewCollection}
                 className="inline-flex items-center justify-center px-7 py-3.5 bg-transparent border border-[#654B39]/70 text-[#3B2A20] text-xs uppercase tracking-[0.25em] font-medium rounded-[2px] transition-all duration-300 hover:bg-[#3B2A20] hover:text-[#F8F1E7] hover:-translate-y-0.5 cursor-pointer"
               >
-                VIEW COLLECTION
+                {content?.secondaryButtonText || 'VIEW COLLECTIONS'}
               </button>
             </div>
 
@@ -97,8 +103,8 @@ export const Hero: React.FC<HeroProps> = ({ onExploreBridal, onViewCollection })
               {/* Main Editorial Image Container */}
               <div className="relative aspect-[3/4] sm:aspect-[4/5] lg:aspect-[3/4] overflow-hidden rounded-[2px] shadow-[0_12px_36px_rgba(59,42,32,0.12)] bg-[#F3E8DA]">
                 <img
-                  src={heroImage}
-                  alt="MOONLIT CLOSET Bridal Couture - Handcrafted Champagne Embroidered Bridal Lehenga"
+                  src={currentHeroImage}
+                  alt="MOONLIT CLOSET Couture"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center transform hover:scale-102 transition-transform duration-700 ease-out"
                 />

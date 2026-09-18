@@ -1,13 +1,18 @@
 import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import bridalEditorialImg from '../assets/images/bridal_collection_1789228838332.jpg';
-import craftDetailImg from '../assets/images/artisan_craft_detail_1789228889907.jpg';
+import defaultEditorialImg from '../assets/images/bridal_collection_1789228838332.jpg';
+import defaultCraftDetailImg from '../assets/images/artisan_craft_detail_1789228889907.jpg';
+import { SiteContent } from '../types';
 
 interface BridalEditorialProps {
   onDiscoverCraft: () => void;
+  content?: SiteContent['editorial'];
 }
 
-export const BridalEditorial: React.FC<BridalEditorialProps> = ({ onDiscoverCraft }) => {
+export const BridalEditorial: React.FC<BridalEditorialProps> = ({ onDiscoverCraft, content }) => {
+  const editorialImage = content?.image || defaultEditorialImg;
+  const artisanImage = content?.artisanImage || defaultCraftDetailImg;
+
   return (
     <section 
       id="bridal-editorial-section" 
@@ -26,8 +31,8 @@ export const BridalEditorial: React.FC<BridalEditorialProps> = ({ onDiscoverCraf
               {/* Main Bridal Image */}
               <div className="relative aspect-[3/4] rounded-[2px] overflow-hidden shadow-[0_16px_40px_rgba(59,42,32,0.1)] bg-[#F3E8DA]">
                 <img
-                  src={bridalEditorialImg}
-                  alt="MOONLIT CLOSET Bridal Couture - Intricate Hand Embroidery"
+                  src={editorialImage}
+                  alt="MOONLIT CLOSET Editorial Handcraft"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center"
                 />
@@ -37,15 +42,19 @@ export const BridalEditorial: React.FC<BridalEditorialProps> = ({ onDiscoverCraf
               <div className="absolute -bottom-6 -right-4 sm:-right-6 w-48 sm:w-56 bg-[#FFFDF9] border border-[#D8C2A5] p-3.5 shadow-xl rounded-[2px]">
                 <div className="relative aspect-square overflow-hidden mb-2 rounded-[1px]">
                   <img
-                    src={craftDetailImg}
+                    src={artisanImage}
                     alt="Artisan embroidery frame detail"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-[#3B2A20]/10"></div>
                 </div>
-                <p className="text-[9px] uppercase tracking-[0.2em] text-[#B99A62] font-semibold">Atelier Lahore</p>
-                <p className="font-serif text-xs text-[#3B2A20] font-medium leading-tight">Authentic Adda Needlework</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-[#B99A62] font-semibold">
+                  {content?.artisanLocation || 'Atelier Lahore'}
+                </p>
+                <p className="font-serif text-xs text-[#3B2A20] font-medium leading-tight">
+                  {content?.artisanTitle || 'Authentic Adda Needlework'}
+                </p>
               </div>
 
             </div>
@@ -58,14 +67,13 @@ export const BridalEditorial: React.FC<BridalEditorialProps> = ({ onDiscoverCraf
             <div className="inline-flex items-center gap-2 mb-4">
               <Sparkles className="w-3.5 h-3.5 text-[#B99A62]" />
               <span className="text-[11px] uppercase tracking-[0.3em] font-medium text-[#B99A62]">
-                THE ART OF CRAFT
+                {content?.eyebrow || 'THE ART OF CRAFT'}
               </span>
             </div>
 
             {/* Large serif heading */}
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] leading-[1.18] text-[#3B2A20] font-normal tracking-tight mb-6">
-              Every Detail, <br />
-              <span className="italic font-normal text-[#523B2D]">Thoughtfully Crafted</span>
+              {content?.title || 'Crafted for Moments That Become Memories'}
             </h2>
 
             {/* Decorative floral line ornament */}
@@ -79,11 +87,11 @@ export const BridalEditorial: React.FC<BridalEditorialProps> = ({ onDiscoverCraf
 
             {/* Body copy */}
             <p className="text-[#654B39] text-base sm:text-lg leading-relaxed font-light mb-6">
-              From intricate embroidery to graceful silhouettes, every MOONLIT CLOSET creation is designed with patience, precision, and a deep appreciation for timeless beauty.
+              {content?.leadParagraph || 'From intricate embroidery to graceful silhouettes, every MOONLIT CLOSET creation is designed with patience, precision, and a deep appreciation for timeless beauty.'}
             </p>
 
             <p className="text-[#654B39]/90 text-sm leading-relaxed font-light mb-8">
-              We preserve the historic art of Pakistani zardozi, badla, and dabka work by working exclusively with revered generational ustaads. Each bridal piece takes between 250 to 450 meticulous atelier hours, ensuring an heirloom garment made to be cherished for lifetimes.
+              {content?.subParagraph || 'Each ensemble begins with pure handwoven silk, shaped through hundreds of hours of delicate hand zardozi, vasli, and fine pearl needlework by master artisans in our Lahore atelier.'}
             </p>
 
             {/* Three Micro Stats */}

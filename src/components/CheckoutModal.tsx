@@ -114,17 +114,29 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
             <div className="bg-[#F8F1E7] border border-[#D8C2A5] p-4 rounded-[2px] max-w-md mx-auto mb-8 text-xs text-[#654B39] text-left space-y-1">
               <p><span className="font-semibold text-[#3B2A20]">Reference:</span> {orderId}</p>
-              <p><span className="font-semibold text-[#3B2A20]">Contact:</span> {formData.phone || '+92 300 0000000'}</p>
+              <p><span className="font-semibold text-[#3B2A20]">Contact:</span> {formData.phone || '+1 716-313-1615'}</p>
               <p><span className="font-semibold text-[#3B2A20]">Email:</span> {formData.email || 'customer@example.com'}</p>
               <p><span className="font-semibold text-[#3B2A20]">Amount:</span> {formatPrice(finalTotalPKR, currency)}</p>
             </div>
 
-            <button
-              onClick={onClose}
-              className="px-8 py-3.5 bg-[#3B2A20] text-[#F8F1E7] text-xs uppercase tracking-[0.25em] font-medium rounded-[2px] hover:bg-[#4D372A]"
-            >
-              Return to Boutique
-            </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href={`https://wa.me/17163131615?text=${encodeURIComponent(
+                  `*New Order Reservation*\n• Order ID: ${orderId}\n• Patron: ${formData.fullName}\n• Phone: ${formData.phone}\n• Amount: ${formatPrice(finalTotalPKR, currency)}\n• Items: ${cartItems.map(i => `${i.quantity}x ${i.product.title} (${i.size})`).join(', ')}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3.5 bg-[#25D366] text-white text-xs uppercase tracking-[0.2em] font-medium rounded-[2px] hover:bg-[#20ba5a] transition-colors"
+              >
+                Send Order via WhatsApp
+              </a>
+              <button
+                onClick={onClose}
+                className="px-8 py-3.5 bg-[#3B2A20] text-[#F8F1E7] text-xs uppercase tracking-[0.25em] font-medium rounded-[2px] hover:bg-[#4D372A]"
+              >
+                Return to Boutique
+              </button>
+            </div>
           </div>
         ) : (
           /* Form State */
@@ -143,9 +155,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="text"
                     required
-                    value={formData.fullName}
+                    value={formData.fullName || ''}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    placeholder="e.g. Fatima Khan"
+                    placeholder="Full Name"
                     className="w-full bg-[#F8F1E7] border border-[#D8C2A5] px-3 py-2 text-xs text-[#3B2A20] rounded-[1px] focus:outline-none focus:border-[#3B2A20]"
                   />
                 </div>
@@ -157,9 +169,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="email"
                     required
-                    value={formData.email}
+                    value={formData.email || ''}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="fatima@example.com"
+                    placeholder="email@example.com"
                     className="w-full bg-[#F8F1E7] border border-[#D8C2A5] px-3 py-2 text-xs text-[#3B2A20] rounded-[1px] focus:outline-none focus:border-[#3B2A20]"
                   />
                 </div>
@@ -171,9 +183,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="tel"
                     required
-                    value={formData.phone}
+                    value={formData.phone || ''}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+92 300 1234567"
+                    placeholder="+1 716 313 1615"
                     className="w-full bg-[#F8F1E7] border border-[#D8C2A5] px-3 py-2 text-xs text-[#3B2A20] rounded-[1px] focus:outline-none focus:border-[#3B2A20]"
                   />
                 </div>
@@ -185,9 +197,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="text"
                     required
-                    value={formData.city}
+                    value={formData.city || ''}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="Lahore, Karachi, Islamabad, London..."
+                    placeholder="City"
                     className="w-full bg-[#F8F1E7] border border-[#D8C2A5] px-3 py-2 text-xs text-[#3B2A20] rounded-[1px] focus:outline-none focus:border-[#3B2A20]"
                   />
                 </div>
@@ -199,9 +211,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="text"
                     required
-                    value={formData.address}
+                    value={formData.address || ''}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="House 42, Block G, Phase 5, DHA"
+                    placeholder="Street Address, Suite / Apartment"
                     className="w-full bg-[#F8F1E7] border border-[#D8C2A5] px-3 py-2 text-xs text-[#3B2A20] rounded-[1px] focus:outline-none focus:border-[#3B2A20]"
                   />
                 </div>

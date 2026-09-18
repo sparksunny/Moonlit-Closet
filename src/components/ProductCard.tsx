@@ -60,7 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
           {product.isNew && (
             <span className="bg-[#3B2A20] text-[#F8F1E7] text-[9px] uppercase tracking-[0.2em] font-medium px-2 py-0.5 rounded-[1px] shadow-sm">
-              NEW
+              NEW ARRIVAL
             </span>
           )}
           {product.isBestseller && !product.isNew && (

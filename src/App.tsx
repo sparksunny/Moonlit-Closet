@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PRODUCTS } from './data/products';
-import { Product, CartItem, CategoryType, OccasionType } from './types';
+import { DEFAULT_SITE_CONTENT } from './data/defaultSiteContent';
+import { Product, CartItem, CategoryType, OccasionType, SiteContent } from './types';
 import { Currency } from './utils/formatters';
 
 import { AnnouncementBar } from './components/AnnouncementBar';
@@ -8,13 +9,10 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { FeaturedCollections } from './components/FeaturedCollections';
 import { BridalEditorial } from './components/BridalEditorial';
-import { TrendingCollection } from './components/TrendingCollection';
 import { CraftsmanshipSection } from './components/CraftsmanshipSection';
 import { ProductCollectionGrid } from './components/ProductCollectionGrid';
 import { OccasionGuide } from './components/OccasionGuide';
 import { Testimonials } from './components/Testimonials';
-import { InstagramGallery } from './components/InstagramGallery';
-import { Newsletter } from './components/Newsletter';
 import { Footer } from './components/Footer';
 
 import { CartDrawer } from './components/CartDrawer';
@@ -23,12 +21,71 @@ import { SearchOverlay } from './components/SearchOverlay';
 import { QuickViewModal } from './components/QuickViewModal';
 import { CheckoutModal } from './components/CheckoutModal';
 import { ConsultationModal } from './components/ConsultationModal';
+import { AdminPanel } from './components/AdminPanel';
 import { Toast, ToastMessage } from './components/Toast';
+import { Sparkles } from 'lucide-react';
 
 export default function App() {
   // Global State
   const [currency, setCurrency] = useState<Currency>('PKR');
   
+  // Dynamic Products State with LocalStorage Persistence
+  const [products, setProducts] = useState<Product[]>(() => {
+    try {
+      const saved = localStorage.getItem('moonlit_closet_products');
+      return saved ? JSON.parse(saved) : PRODUCTS;
+    } catch {
+      return PRODUCTS;
+    }
+  });
+
+  // Dynamic Site Content State with LocalStorage Persistence and safe deep merge
+  const [siteContent, setSiteContent] = useState<SiteContent>(() => {
+    try {
+      const saved = localStorage.getItem('moonlit_closet_site_content');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_SITE_CONTENT,
+          ...parsed,
+          contact: {
+            ...DEFAULT_SITE_CONTENT.contact,
+            ...(parsed.contact || {}),
+          },
+          hero: {
+            ...DEFAULT_SITE_CONTENT.hero,
+            ...(parsed.hero || {}),
+          },
+          editorial: {
+            ...DEFAULT_SITE_CONTENT.editorial,
+            ...(parsed.editorial || {}),
+          },
+          featuredCollections: {
+            ...DEFAULT_SITE_CONTENT.featuredCollections,
+            ...(parsed.featuredCollections || {}),
+          },
+          wardrobe: {
+            ...DEFAULT_SITE_CONTENT.wardrobe,
+            ...(parsed.wardrobe || {}),
+          },
+        };
+      }
+      return DEFAULT_SITE_CONTENT;
+    } catch {
+      return DEFAULT_SITE_CONTENT;
+    }
+  });
+
+  // Admin Control Panel & Authentication State (Password = "taq@123")
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('moonlit_admin_auth') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
+
   // Cart State with localStorage persistence
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
@@ -66,7 +123,7 @@ export default function App() {
   // Sync Cart to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('moonlit_cart', JSON.stringify(cartItems));
+      localStorage.setItem('moonlit_closet_cart', JSON.stringify(cartItems));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
@@ -75,14 +132,14 @@ export default function App() {
   // Sync Wishlist to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('moonlit_wishlist', JSON.stringify(Array.from(wishlistIds)));
+      localStorage.setItem('moonlit_closet_wishlist', JSON.stringify(Array.from(wishlistIds)));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
   }, [wishlistIds]);
 
   const addToast = (type: 'cart' | 'wishlist' | 'info', title: string, message: string) => {
-    const id = Date.now().toString();
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     setToasts((prev) => [...prev, { id, type, title, message }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -91,6 +148,53 @@ export default function App() {
 
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  // Admin Operations: Save Changes
+  const handleSaveAdminData = (newContent: SiteContent, newProducts: Product[]) => {
+    setSiteContent(newContent);
+    setProducts(newProducts);
+    try {
+      localStorage.setItem('moonlit_closet_site_content', JSON.stringify(newContent));
+      localStorage.setItem('moonlit_closet_products', JSON.stringify(newProducts));
+      addToast('info', 'Changes Saved Live', 'Website texts, imagery, and products have been saved.');
+    } catch (e) {
+      console.error('LocalStorage write error:', e);
+    }
+  };
+
+  const handleResetDefaults = () => {
+    if (window.confirm('Reset all website texts, images, and products back to atelier defaults?')) {
+      setSiteContent(DEFAULT_SITE_CONTENT);
+      setProducts(PRODUCTS);
+      try {
+        localStorage.removeItem('moonlit_closet_site_content');
+        localStorage.removeItem('moonlit_closet_products');
+        addToast('info', 'Reset to Defaults', 'Default boutique content and products restored.');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const handleAdminLogin = () => {
+    setIsAdminLoggedIn(true);
+    try {
+      sessionStorage.setItem('moonlit_admin_auth', 'true');
+    } catch (e) {
+      console.warn(e);
+    }
+    addToast('info', 'Admin Access Granted', 'Welcome to the MOONLIT CLOSET Atelier Control Panel.');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    try {
+      sessionStorage.removeItem('moonlit_admin_auth');
+    } catch (e) {
+      console.warn(e);
+    }
+    addToast('info', 'Admin Session Locked', 'Control panel is now locked.');
   };
 
   // Cart operations
@@ -173,13 +277,17 @@ export default function App() {
   };
 
   // Wishlist products array
-  const wishlistProducts = PRODUCTS.filter((p) => wishlistIds.has(p.id));
+  const wishlistProducts = products.filter((p) => wishlistIds.has(p.id));
 
   return (
-    <div className="min-h-screen bg-[#F8F1E7] text-[#3B2A20] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8F1E7] text-[#3B2A20] flex flex-col font-sans relative">
       
       {/* 1. Announcement Bar */}
-      <AnnouncementBar />
+      <AnnouncementBar
+        messages={siteContent.announcementMessages}
+        isAdminLoggedIn={isAdminLoggedIn}
+        onOpenAdmin={() => setAdminPanelOpen(true)}
+      />
 
       {/* 2. Premium Navigation / Header */}
       <Header
@@ -191,42 +299,38 @@ export default function App() {
         currency={currency}
         onSelectCurrency={setCurrency}
         onNavigateSection={handleNavigateSection}
+        onOpenAdmin={() => setAdminPanelOpen(true)}
+        isAdminLoggedIn={isAdminLoggedIn}
+        brandName={siteContent.brandName}
+        brandTagline={siteContent.brandTagline}
       />
 
       <main className="flex-1">
         {/* 3. Hero Section */}
         <Hero
-          onExploreBridal={() => handleNavigateSection('catalog-section', 'bridal')}
-          onViewCollection={() => handleNavigateSection('collections-section')}
+          onExploreBridal={() => handleNavigateSection('bridal-collection-section', 'bridal')}
+          onViewCollection={() => handleNavigateSection('party-wear-section', 'party-wear')}
+          content={siteContent.hero}
         />
 
-        {/* 4. Featured Collections ("Curated for Your Moment") */}
+        {/* 4. Featured Collections ("Curated for Your Moment - 2 Categories") */}
         <FeaturedCollections
-          onSelectCollection={(cat) => handleNavigateSection('catalog-section', cat)}
+          onSelectCollection={(cat) => handleNavigateSection(cat === 'bridal' ? 'bridal-collection-section' : 'party-wear-section', cat)}
+          content={siteContent.featuredCollections}
         />
 
         {/* 5. Bridal Editorial Section ("The Art of Craft") */}
         <BridalEditorial
           onDiscoverCraft={() => handleNavigateSection('craftsmanship-section')}
+          content={siteContent.editorial}
         />
 
-        {/* 6. New Arrivals / Trending Collection */}
-        <TrendingCollection
-          products={PRODUCTS}
-          currency={currency}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={handleToggleWishlist}
-          onQuickView={setQuickViewProduct}
-          onAddToCart={(p) => handleAddToCart(p, p.sizes[0] || 'S', 1)}
-          onViewAll={() => handleNavigateSection('catalog-section')}
-        />
-
-        {/* 7. Craftsmanship Section ("Crafted With Intention") */}
+        {/* 6. Craftsmanship Section ("Crafted With Intention") */}
         <CraftsmanshipSection />
 
-        {/* 8. Product Collection Grid with Filters & Sort */}
+        {/* 7. Product Showcase: 2 Sections & 2 Groups ("Bridal Collection" and "Party Wear") */}
         <ProductCollectionGrid
-          products={PRODUCTS}
+          products={products}
           currency={currency}
           wishlistIds={wishlistIds}
           onToggleWishlist={handleToggleWishlist}
@@ -234,6 +338,7 @@ export default function App() {
           onAddToCart={(p) => handleAddToCart(p, p.sizes[0] || 'S', 1)}
           activeCategory={activeCategory}
           onChangeCategory={setActiveCategory}
+          content={siteContent.wardrobe}
         />
 
         {/* 9. Bridal Occasion Guide ("Find Your Perfect Look") */}
@@ -245,22 +350,14 @@ export default function App() {
 
         {/* 10. Customer Testimonials ("Loved by Women Who Celebrate Beautifully") */}
         <Testimonials />
-
-        {/* 11. Instagram / Social Gallery ("Follow the MOONLIT CLOSET Edit") */}
-        <InstagramGallery />
-
-        {/* 12. Newsletter Signup ("Be First to Discover What's New") */}
-        <Newsletter
-          onSubscribed={(email) =>
-            addToast('info', 'Subscribed', `Welcome to the MOONLIT CLOSET Gazette (${email}).`)
-          }
-        />
       </main>
 
-      {/* 13. Premium Footer */}
+      {/* 13. Page Footer matching all requested specifications */}
       <Footer
         onNavigateCategory={(cat) => handleNavigateSection('catalog-section', cat)}
+        onNavigateSection={handleNavigateSection}
         onOpenConsultationModal={() => setConsultationOpen(true)}
+        content={siteContent}
       />
 
       {/* Interactive Drawers and Overlays */}
@@ -287,7 +384,7 @@ export default function App() {
       <SearchOverlay
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
-        products={PRODUCTS}
+        products={products}
         currency={currency}
         onSelectProduct={setQuickViewProduct}
       />
@@ -313,6 +410,22 @@ export default function App() {
       <ConsultationModal
         isOpen={consultationOpen}
         onClose={() => setConsultationOpen(false)}
+      />
+
+      {/* Admin Control Panel Modal */}
+      <AdminPanel
+        isOpen={adminPanelOpen}
+        onClose={() => {
+          handleAdminLogout();
+          setAdminPanelOpen(false);
+        }}
+        siteContent={siteContent}
+        products={products}
+        onSave={handleSaveAdminData}
+        onResetDefaults={handleResetDefaults}
+        isLoggedIn={isAdminLoggedIn}
+        onLoginSuccess={handleAdminLogin}
+        onLogout={handleAdminLogout}
       />
 
       <Toast toasts={toasts} onDismiss={removeToast} />
